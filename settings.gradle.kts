@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "MealMaster"
 include(":app")
+include(":feature:preference")
