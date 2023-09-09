@@ -17,3 +17,4 @@ rootProject.name = "MealMaster"
 include(":app")
 include(":feature:preference")
 include(":feature:profile")
+include(":feature:recipes")
