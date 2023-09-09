@@ -47,8 +47,6 @@ dependencies {
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.lifecycle.viewmodel.ktx)
-    implementation("androidx.compose.animation:animation:1.5.1")
-    implementation("androidx.compose.animation:animation-android:1.5.1")
     implementation(libs.material)
     implementation(platform(libs.compose.bom))
     implementation(libs.ui)
