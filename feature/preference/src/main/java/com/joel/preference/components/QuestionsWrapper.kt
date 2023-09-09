@@ -1,7 +1,6 @@
 package com.joel.preference.components
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,12 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.MaterialTheme
@@ -164,46 +158,6 @@ fun PreferenceQuestion(
     }
 }
 
-@Composable
-fun TPreferenceQuestion(
-    title: Int,
-    possibleAnswers: List<String>,
-    selectedAnswers: List<String>,
-    modifier: Modifier = Modifier,
-    onChipsSelected : (String) -> Unit
-){
-
-    QuestionWrapper(
-        titleResourceId = title,
-        modifier = modifier,
-    ) {
-        LazyVerticalGrid(columns = GridCells.Fixed(2)){
-            items(possibleAnswers){chipText ->
-                val selected =  chipText in selectedAnswers
-                AssistChip(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .selectable(
-                            selected = selected
-                        ) {
-                            onChipsSelected(chipText)
-                        },
-                    label = {
-                        Text(
-                            chipText,
-                        )
-                    },
-                    colors = AssistChipDefaults.assistChipColors(
-                        containerColor = if (selected) Color.Yellow else MaterialTheme.colorScheme.onPrimary,
-                    ),
-                    onClick = {
-                        onChipsSelected(chipText)
-                    }
-                )
-            }
-        }
-    }
-}
 
 
 @Composable

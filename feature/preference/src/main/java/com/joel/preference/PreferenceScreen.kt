@@ -2,7 +2,6 @@ package com.joel.preference
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.togetherWith
@@ -29,7 +28,7 @@ fun PreferenceScreen(
     viewModel: PreferenceViewModel = viewModel()
 ){
 
-    val preferenceSurveyScreenData = viewModel.surveyScreenData ?: return
+    val preferenceSurveyScreenData = viewModel.surveyScreenData
 
 
     PreferenceSurvey(
