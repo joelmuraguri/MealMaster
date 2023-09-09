@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="close_icon">Close Icon</string>
+    <string name="previous_button">Previous</string>
+    <string name="finish_button">Finish</string>
+    <string name="next_button">Next</string>
+    <string name="question_count">\u00A0of %d</string>
+    <string name="diet_question">Do you have any diet preferences?</string>
+    <string name="allergies_question">Do you have any Food Allergies?</string>
+    <string name="name_question">What is your Name?</string>
+    <string name="nutrients_question">Are there any specific nutrients that you prefer in your diet?</string>
+</resources>
