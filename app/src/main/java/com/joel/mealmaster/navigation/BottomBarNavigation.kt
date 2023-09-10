@@ -16,10 +16,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.joel.mealmaster.ui.theme.MealMasterTheme
+import com.joel.mealmaster.ui.theme.orange20
 
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
-    BottomAppBar(containerColor = MaterialTheme.colorScheme.background) {
+    BottomAppBar() {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
 
@@ -44,11 +45,11 @@ fun BottomNavigationBar(navController: NavHostController) {
                     }
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    selectedIconColor = orange20,
                     unselectedIconColor = MaterialTheme.colorScheme.onBackground,
-                    selectedTextColor = MaterialTheme.colorScheme.secondary,
+                    selectedTextColor = orange20,
                     unselectedTextColor = MaterialTheme.colorScheme.onBackground,
-                    indicatorColor = MaterialTheme.colorScheme.background.copy(alpha = 0f)
+//                    indicatorColor = MaterialTheme.colorScheme.background.copy(alpha = 0f)
                 )
             )
         }
