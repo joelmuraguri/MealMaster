@@ -8,6 +8,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 
+// should use room
+// card that holds diets, allergies, nutrients, on click launches a bottom sheet
+// holds image and user name
+// should have a dialog for image and name input
 @Composable
 fun AccountsScreen(){
 
@@ -21,3 +25,6 @@ fun AccountsScreen(){
         )
     }
 }
+
+
+
