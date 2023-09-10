@@ -3,6 +3,10 @@ package com.joel.preference
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 
 class PreferenceViewModel : ViewModel() {
 
@@ -48,6 +52,9 @@ class PreferenceViewModel : ViewModel() {
     val isNextEnabled: Boolean
         get() = _isNextEnabled.value
 
+    private val _uiEvent =  Channel<UIevent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
+
 
     fun fetchUserPreference(preferenceUiEvents: PreferenceUiEvents){
         when(preferenceUiEvents){
@@ -60,7 +67,11 @@ class PreferenceViewModel : ViewModel() {
                 }
                 changeQuestion(questionIndex - 1)
             }
-            PreferenceUiEvents.SaveUserPreference -> TODO()
+            PreferenceUiEvents.SaveUserPreference -> {
+                viewModelScope.launch {
+                    _uiEvent.send(UIevent.NavigationToHome)
+                }
+            }
             is PreferenceUiEvents.SelectAllergies -> {
                 if (_allergiesSelectedChips.contains(preferenceUiEvents.allergies)){
                     _allergiesSelectedChips.remove(preferenceUiEvents.allergies)
@@ -93,7 +104,6 @@ class PreferenceViewModel : ViewModel() {
         }
     }
 
-
     private fun changeQuestion(newQuestionIndex : Int){
         questionIndex = newQuestionIndex
         _isNextEnabled.value = getIsNextEnabled()
@@ -121,6 +131,9 @@ class PreferenceViewModel : ViewModel() {
     }
 
 }
+sealed class UIevent{
+    object NavigationToHome : UIevent()
+}
 
 data class PreferenceSurveyScreenData(
     val questionIndex: Int,
@@ -147,13 +160,3 @@ sealed class PreferenceUiEvents{
     object MovePrevious : PreferenceUiEvents()
 }
 
-//data class PreferenceScreenState(
-//    val dietsList : List<String> = emptyList(),
-//    val nutritionList : List<String> = emptyList(),
-//    val allergiesList : List<String> = emptyList(),
-//    val dietSelectionError : String? = null,
-//    val nutritionSelectionError : String?= null,
-//    val allergiesSelectionError : String? = null,
-//    val currentPosition : Int = 0,
-//    val previousPosition : Int = 0
-//)

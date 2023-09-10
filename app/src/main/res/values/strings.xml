@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">MealMaster</string>
+    <string name="home_bottom_bar_title">Home</string>
+    <string name="meal_plan_bottom_bar_title">Meal Plan</string>
+    <string name="recipe_bottom_bar_title">Recipes</string>
+    <string name="profile_bottom_bar_title">Profile</string>
+    <string name="preference_title">Preference</string>
+    <string name="recipe_details_title">Recipe Details</string>
+    <string name="meal_plan_title">Meal Plan</string>
+    <string name="diet_preference_title">Diet Preference</string>
+    <string name="nutrition_tracking_title">Nutrition Tracking</string>
+    <string name="favourites_title">Favourites</string>
+    <string name="settings_title">Settings</string>
 </resources>

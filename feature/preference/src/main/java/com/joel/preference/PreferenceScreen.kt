@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -25,11 +26,22 @@ private const val CONTENT_ANIMATION_DURATION = 300
 
 @Composable
 fun PreferenceScreen(
-    viewModel: PreferenceViewModel = viewModel()
+    viewModel: PreferenceViewModel = viewModel(),
+    onFinishPressed: () -> Unit
 ){
 
     val preferenceSurveyScreenData = viewModel.surveyScreenData
 
+
+    LaunchedEffect(key1 = true){
+        viewModel.uiEvent.collect{event ->
+            when(event){
+                is UIevent.NavigationToHome -> {
+                    onFinishPressed()
+                }
+            }
+        }
+    }
 
     PreferenceSurvey(
         surveyScreenData = preferenceSurveyScreenData,
@@ -43,7 +55,9 @@ fun PreferenceScreen(
         onNextPressed = {
                viewModel.fetchUserPreference(PreferenceUiEvents.MoveNext)
         },
-        onFinishPressed = { /*TODO*/ })
+        onFinishPressed = {
+            viewModel.fetchUserPreference(PreferenceUiEvents.SaveUserPreference)
+        })
     { paddingValues ->
 
         val modifier = Modifier.padding(paddingValues)

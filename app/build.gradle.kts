@@ -53,12 +53,21 @@ android {
 dependencies {
 
     implementation(project(":feature:preference"))
+    implementation(project(":feature:discover"))
+    implementation(project(":feature:mealplan"))
+    implementation(project(":feature:recipes"))
+    implementation(project(":feature:profile"))
 
 
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.activity.compose)
     implementation(platform(libs.compose.bom))
+    implementation(libs.androidx.navigation)
+    implementation(libs.androidx.window)
+    implementation(libs.androidx.tracing.ktx)
+    implementation(libs.androidx.compose.runtime.tracing)
+    implementation(libs.androidx.compose.material3.windowSizeClass)
     implementation(libs.ui)
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)

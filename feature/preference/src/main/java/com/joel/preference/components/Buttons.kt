@@ -59,11 +59,12 @@ fun PreferenceBottomBar(
                 }
             }
             if (showFinishButton){
-                OutlinedButton(
+                Button(
                     onClick = { onFinishPressed() },
                     modifier = Modifier
                         .weight(1f)
-                        .height(50.dp)
+                        .height(50.dp),
+                    enabled = isNextButtonEnabled
                 ) {
                     Text(text = stringResource(id = R.string.finish_button))
                 }
