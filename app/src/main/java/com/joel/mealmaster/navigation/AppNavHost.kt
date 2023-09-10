@@ -1,22 +1,27 @@
 package com.joel.mealmaster.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.joel.discover.DiscoverScreen
 import com.joel.mealplan.MealPlanScreen
 import com.joel.preference.PreferenceScreen
+import com.joel.profile.ProfileItems
 import com.joel.profile.ProfileScreen
+import com.joel.profile.account.AccountsScreen
+import com.joel.profile.favourites.FavouritesScreen
+import com.joel.profile.nutrition_tracking.NutritionTrackingScreen
+import com.joel.profile.settings.SettingsScreen
 import com.joel.recipes.RecipeScreen
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 
 @Composable
 fun MealMasterNavHost(
     navController: NavHostController,
     updateBottomBarState: (Boolean) -> Unit
 ){
+
 
     NavHost(
         navController = navController, startDestination = Screens.Preference.route
@@ -43,15 +48,26 @@ fun MealMasterNavHost(
         }
         composable(route = Screens.Profile.route){
             updateBottomBarState(true)
-            ProfileScreen()
+            ProfileScreen {
+                navController.navigate(route = it.route)
+            }
         }
-//        composable(route = Screens.Preference.route){
-//            updateBottomBarState(false)
-//            PreferenceScreen()
-//        }
+        composable(route = Screens.UserPreference.route){
+            updateBottomBarState(false)
+            AccountsScreen()
+        }
+        composable(route = Screens.NutritionTracking.route){
+            updateBottomBarState(false)
+            NutritionTrackingScreen()
+        }
+        composable(route = Screens.FavouriteRecipes.route){
+            updateBottomBarState(false)
+            FavouritesScreen()
+        }
+        composable(route = Screens.Settings.route){
+            updateBottomBarState(false)
+            SettingsScreen()
+        }
     }
 }
-
-
-
 

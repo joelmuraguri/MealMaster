@@ -18,6 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import com.joel.mealmaster.navigation.MealMasterNavHost
 import com.joel.mealmaster.navigation.BottomNavigationBar
 import com.joel.mealmaster.ui.theme.MealMasterTheme
+import com.joel.profile.ProfileScreen
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
