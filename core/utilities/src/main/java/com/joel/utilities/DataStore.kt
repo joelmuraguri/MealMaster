@@ -1,4 +1,4 @@
-package com.joel.preference
+package com.joel.utilities
 
 object FakeDataStore {
     val dietList = listOf(
