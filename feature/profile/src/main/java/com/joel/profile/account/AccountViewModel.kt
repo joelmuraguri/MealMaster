@@ -1,0 +1,89 @@
+package com.joel.profile.account
+
+import android.net.Uri
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
+import com.joel.profile.R
+import com.joel.utilities.FakeDataStore
+
+class AccountViewModel : ViewModel() {
+
+    private val _dietSelectedChips = mutableStateListOf<String>()
+    val dietSelectedChips: List<String> get() = _dietSelectedChips
+
+    private val _allergiesSelectedChips = mutableStateListOf<String>()
+    val allergiesSelectedChips: List<String> get() = _allergiesSelectedChips
+
+    private val _nutrientsSelectedChips = mutableStateListOf<String>()
+    val nutrientsSelectedChips: List<String> get() = _nutrientsSelectedChips
+
+    // Reference to the dietList from FakeDataStore
+    val dietList: List<String> = FakeDataStore.dietList
+    val allergiesList: List<String> = FakeDataStore.allergiesList
+    val nutrientsList: List<String> = FakeDataStore.nutrientsList
+
+
+
+    private val _userName = mutableStateOf("")
+    val userName : String
+        get() = _userName.value
+
+    val placeHolderImage = mutableStateOf<Any>(R.drawable.round_person_24)
+    private val _profileUrl = mutableStateOf<Uri?>(null)
+    val profileUrl : Uri
+        get() = _profileUrl.value ?: Uri.parse("android.resource://com.joel.mealmaster/drawable/round_person_24")
+
+
+
+    fun updateUserDetails(accountUiEvents: AccountUiEvents){
+        when(accountUiEvents){
+            AccountUiEvents.SaveUserDetails -> TODO()
+            is AccountUiEvents.SelectAllergies -> {
+                if (_allergiesSelectedChips.contains(accountUiEvents.allergies)){
+                    _allergiesSelectedChips.remove(accountUiEvents.allergies)
+                } else {
+                    _allergiesSelectedChips.add(accountUiEvents.allergies)
+                }
+            }
+            is AccountUiEvents.SelectDiet -> {
+                if (_dietSelectedChips.contains(accountUiEvents.diet)){
+                    _dietSelectedChips.remove(accountUiEvents.diet)
+                } else {
+                    _dietSelectedChips.add(accountUiEvents.diet)
+                }
+            }
+            is AccountUiEvents.SelectNutrition -> {
+                if (_nutrientsSelectedChips.contains(accountUiEvents.nutrition)){
+                    _nutrientsSelectedChips.remove(accountUiEvents.nutrition)
+                } else {
+                    _nutrientsSelectedChips.add(accountUiEvents.nutrition)
+                }
+            }
+            is AccountUiEvents.SelectProfileImage -> {
+                _profileUrl.value = accountUiEvents.image
+            }
+            is AccountUiEvents.SelectUserName -> {
+                _userName.value = accountUiEvents.name
+            }
+        }
+
+    }
+}
+
+sealed class AccountUiEvents(){
+    object SaveUserDetails : AccountUiEvents()
+    data class SelectDiet(val diet : String) : AccountUiEvents()
+    data class SelectAllergies(val allergies : String) : AccountUiEvents()
+    data class SelectNutrition(val nutrition : String) : AccountUiEvents()
+    data class SelectProfileImage(val image : Uri) : AccountUiEvents()
+    data class SelectUserName(val name : String) : AccountUiEvents()
+}
+
+sealed class UiEvents{
+    object NavigateToProfile : UiEvents()
+}
+
+data class AccountScreenState(
+    val isBottomSheetClicked : Boolean
+)
