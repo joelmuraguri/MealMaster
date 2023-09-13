@@ -6,8 +6,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.joel.profile.R
 import com.joel.utilities.FakeDataStore
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class AccountViewModel : ViewModel() {
+
 
     private val _dietSelectedChips = mutableStateListOf<String>()
     val dietSelectedChips: List<String> get() = _dietSelectedChips
@@ -18,12 +21,35 @@ class AccountViewModel : ViewModel() {
     private val _nutrientsSelectedChips = mutableStateListOf<String>()
     val nutrientsSelectedChips: List<String> get() = _nutrientsSelectedChips
 
+    private val _preferenceItems = mutableStateOf(UserPreferenceItems(title = "", list = emptyList()))
+    val preferenceItems : UserPreferenceItems
+        get() = _preferenceItems.value
+
     // Reference to the dietList from FakeDataStore
     val dietList: List<String> = FakeDataStore.dietList
     val allergiesList: List<String> = FakeDataStore.allergiesList
     val nutrientsList: List<String> = FakeDataStore.nutrientsList
 
-
+    val preferenceListItems  : Flow<List<UserPreferenceItems>> = flow {
+        val preferenceItems = listOf(
+            UserPreferenceItems(
+                "Manage Diet",
+                list = dietList,
+                selectedAnswers = dietSelectedChips
+            ),
+            UserPreferenceItems(
+                title = "Manage Allergies Preference",
+                list = allergiesList,
+                selectedAnswers = allergiesSelectedChips
+            ),
+            UserPreferenceItems(
+                title = "Manage Nutrients",
+                list = nutrientsList,
+                selectedAnswers = nutrientsSelectedChips
+            )
+        )
+        emit(preferenceItems)
+    }
 
     private val _userName = mutableStateOf("")
     val userName : String
@@ -39,6 +65,12 @@ class AccountViewModel : ViewModel() {
     fun updateUserDetails(accountUiEvents: AccountUiEvents){
         when(accountUiEvents){
             AccountUiEvents.SaveUserDetails -> TODO()
+            is AccountUiEvents.SelectProfileImage -> {
+                _profileUrl.value = accountUiEvents.image
+            }
+            is AccountUiEvents.SelectUserName -> {
+                _userName.value = accountUiEvents.name
+            }
             is AccountUiEvents.SelectAllergies -> {
                 if (_allergiesSelectedChips.contains(accountUiEvents.allergies)){
                     _allergiesSelectedChips.remove(accountUiEvents.allergies)
@@ -60,30 +92,16 @@ class AccountViewModel : ViewModel() {
                     _nutrientsSelectedChips.add(accountUiEvents.nutrition)
                 }
             }
-            is AccountUiEvents.SelectProfileImage -> {
-                _profileUrl.value = accountUiEvents.image
-            }
-            is AccountUiEvents.SelectUserName -> {
-                _userName.value = accountUiEvents.name
-            }
         }
-
     }
 }
 
-sealed class AccountUiEvents(){
+sealed class AccountUiEvents {
     object SaveUserDetails : AccountUiEvents()
-    data class SelectDiet(val diet : String) : AccountUiEvents()
-    data class SelectAllergies(val allergies : String) : AccountUiEvents()
-    data class SelectNutrition(val nutrition : String) : AccountUiEvents()
     data class SelectProfileImage(val image : Uri) : AccountUiEvents()
     data class SelectUserName(val name : String) : AccountUiEvents()
-}
 
-sealed class UiEvents{
-    object NavigateToProfile : UiEvents()
+    data class SelectDiet(val diet : String) : AccountUiEvents()
+    data class SelectNutrition(val nutrition: String ) : AccountUiEvents()
+    data class SelectAllergies(val allergies: String) : AccountUiEvents()
 }
-
-data class AccountScreenState(
-    val isBottomSheetClicked : Boolean
-)

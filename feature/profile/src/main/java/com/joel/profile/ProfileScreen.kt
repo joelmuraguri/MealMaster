@@ -31,6 +31,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.joel.profile.utilities.ProfileItems
 
 @Composable
 fun ProfileScreen(
@@ -56,7 +57,7 @@ fun ProfileMenu(
             .padding(horizontal = 8.dp)
     ){
         item {
-            UserDetails()
+            UserImageAndName()
         }
         items(profileItems){items ->
             OptionsItemStyle(
@@ -70,7 +71,7 @@ fun ProfileMenu(
 }
 
 @Composable
-fun UserDetails() {
+fun UserImageAndName() {
 
     Box(
         contentAlignment = Alignment.Center,

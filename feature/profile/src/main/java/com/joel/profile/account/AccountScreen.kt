@@ -16,17 +16,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,12 +40,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -55,7 +52,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kotlinx.coroutines.launch
-import com.joel.profile.R
 
 
 // should use room
@@ -73,18 +69,10 @@ fun AccountsScreen(
         skipPartiallyExpanded = false
     )
 
-    var selectedItem by remember { mutableStateOf<UserPreferenceItems?>(null) }
-    var bottomSheetSta by remember { mutableStateOf(bottomSheetState) }
-
-//    LaunchedEffect(key1 = true){
-//        val bottomSheet : @Composable (UserPreferenceItems) -> Unit = { item ->
-//                selectedItem = item
-//                bottomSheetSta = bottomSheetState.show()
-//
-//        }
-//    }
+    val preferenceItems = viewModel.preferenceItems
 
 
+    val items by viewModel.preferenceListItems.collectAsState(initial = emptyList())
 
     BackHandler(bottomSheetState.isVisible) {
         scope.launch { bottomSheetState.hide() }
@@ -96,7 +84,7 @@ fun AccountsScreen(
                 title = { /*TODO*/ },
                 actions = {
                     IconButton(onClick = { /*TODO*/ }) {
-                        Icon(imageVector = Icons.Default.Edit, contentDescription = null)
+                        Icon(imageVector = Icons.Default.Check, contentDescription = null)
                     }
                 }
             )
@@ -119,80 +107,79 @@ fun AccountsScreen(
                     viewModel.updateUserDetails(AccountUiEvents.SelectProfileImage(image))
                 }
             )
-//            PreferenceList(
-//                items = preferenceList, onLaunchBottomSheet = {
-//                scope.launch {
-//                    bottomSheetState.show()
-//                }
-//            })
-
-//            if (bottomSheetState.isVisible){
-//                ModalBottomSheet(onDismissRequest = { /*TODO*/ }) {
-//                    BottomSheetItems(
-//                        possiblePreferences = viewModel.dietList,
-//                        selectedPreferences = viewModel.dietSelectedChips,
-//                        onChipsSelected = {
-//                            viewModel.updateUserDetails(AccountUiEvents.SelectDiet(it))
-//                        }
-//                    )
-//                }
-//            }
-
-
             PreferenceList(
-                items = preferenceList,
-                onPreferenceClick = { items ->
-                    selectedItem = items
+                onPreferenceClick = { item ->
                     scope.launch {
                         bottomSheetState.show()
                     }
-                }
+                },
+                items = items,
             )
 
-            if (bottomSheetState.isVisible && selectedItem != null){
+
+            if (bottomSheetState.isVisible){
                 ModalBottomSheet(
                     onDismissRequest = {
                         scope.launch {
+
                             bottomSheetState.hide()
                         }
                     },
                     sheetState = bottomSheetState,
                     content = {
                         BottomSheetItems(
-                            possiblePreferences = ,
-                            selectedPreferences = ,
-                            onChipsSelected = 
-                        ) {
-                            
-                        }
+                            possiblePreferences = preferenceItems.list,
+                            selectedPreferences = preferenceItems.selectedAnswers,
+                            onChipsSelected = { chipText ->
+                                   if (preferenceItems.list == viewModel.dietList){
+                                       viewModel.updateUserDetails(AccountUiEvents.SelectDiet(chipText))
+                                   } else if(preferenceItems.list == viewModel.allergiesList){
+                                       viewModel.updateUserDetails(AccountUiEvents.SelectAllergies(chipText))
+                                   } else {
+                                       viewModel.updateUserDetails(AccountUiEvents.SelectNutrition(chipText))
+                                   }
+                            },
+                            onClose = {
+                                scope.launch {
+                                    bottomSheetState.hide()
+                                }
+                            }
+                        )
                     }
-                ) 
+                )
             }
         }
     }
 }
-
-
 
 @Composable
 fun PreferenceList(
     items : List<UserPreferenceItems>,
     onPreferenceClick: (UserPreferenceItems) -> Unit
 ){
-    items.forEach{ item ->
-        PreferenceItems(
-            items = item,
-            onLaunchBottomSheet = {
-                onPreferenceClick(item)
-            }
-        )
+//    items.forEach{ item ->
+//        PreferenceItems(
+//            items = item,
+//            onLaunchBottomSheet = {
+//                onPreferenceClick(item)
+//            }
+//        )
+//    }
+
+    LazyColumn(){
+        items(items){ item ->
+            PreferenceItems(
+                onLaunchBottomSheet = { onPreferenceClick(item) },
+                item = item
+            )
+        }
     }
 }
 
 @Composable
 fun PreferenceItems(
-    onLaunchBottomSheet : () -> Unit,
-    items: UserPreferenceItems
+    onLaunchBottomSheet : (UserPreferenceItems) -> Unit,
+    item: UserPreferenceItems
 ){
     Card(
         shape = RoundedCornerShape(20.dp),
@@ -200,14 +187,14 @@ fun PreferenceItems(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                onLaunchBottomSheet()
+                onLaunchBottomSheet(item)
             }
             .background(MaterialTheme.colorScheme.background)
             .padding(vertical = 8.dp, horizontal = 16.dp)
             .height(50.dp)
     ) {
         Text(
-            text = items.title,
+            text = item.title,
             modifier = Modifier
                 .padding(horizontal = 10.dp, vertical = 13.dp)
         )
@@ -220,7 +207,8 @@ fun BottomSheetItems(
     possiblePreferences: List<String>,
     selectedPreferences: List<String>,
     onChipsSelected : (String) -> Unit,
-    onClose: () -> Unit
+    onClose: () -> Unit,
+    viewModel: AccountViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ){
 
    Column{
@@ -235,36 +223,99 @@ fun BottomSheetItems(
            }
        }
 
-       LazyVerticalGrid(
-           columns = GridCells.Fixed(2),
-           modifier = Modifier
-               .fillMaxSize()
-       ){
-           items(possiblePreferences){chipText ->
-               val selected =  chipText in selectedPreferences
-               AssistChip(
-                   modifier = Modifier
-                       .padding(8.dp)
-                       .selectable(
-                           selected = selected
-                       ) {
-                           onChipsSelected(chipText)
-                       },
-                   label = {
-                       Text(
-                           chipText,
-                       )
-                   },
-                   colors = AssistChipDefaults.assistChipColors(
-                       containerColor = if (selected) Color.Yellow else MaterialTheme.colorScheme.onPrimary,
-                   ),
-                   onClick = {
-                       onChipsSelected(chipText)
-                   }
-               )
-           }
+       if(possiblePreferences == viewModel.dietList){
+           BottomSheetVerticalGridItems(
+               possiblePreferences = possiblePreferences,
+               selectedPreferences = viewModel.dietSelectedChips,
+               onChipsSelected = {
+                   onChipsSelected(it)
+               }
+           )
+       }else if (possiblePreferences == viewModel.allergiesList){
+           BottomSheetVerticalGridItems(
+               possiblePreferences = possiblePreferences,
+               selectedPreferences = viewModel.allergiesSelectedChips,
+               onChipsSelected = {
+                   onChipsSelected(it)
+               }
+           )
+       } else {
+           BottomSheetVerticalGridItems(
+               possiblePreferences = possiblePreferences,
+               selectedPreferences = viewModel.nutrientsSelectedChips,
+               onChipsSelected = {
+                   onChipsSelected(it)
+               }
+           )
        }
+//       LazyVerticalGrid(
+//           columns = GridCells.Fixed(2),
+//           modifier = Modifier
+//               .fillMaxSize()
+//       ){
+//           items(possiblePreferences){chipText ->
+//               val selected =  chipText in selectedPreferences
+//               AssistChip(
+//                   modifier = Modifier
+//                       .padding(8.dp)
+//                       .selectable(
+//                           selected = selected
+//                       ) {
+//                           onChipsSelected(chipText)
+//                       },
+//                   label = {
+//                       Text(
+//                           chipText,
+//                       )
+//                   },
+//                   colors = AssistChipDefaults.assistChipColors(
+//                       containerColor = if (selected) Color.Yellow else MaterialTheme.colorScheme.onPrimary,
+//                   ),
+//                   onClick = {
+//                       onChipsSelected(chipText)
+//                   }
+//               )
+//           }
+//       }
    }
+}
+
+@Composable
+fun BottomSheetVerticalGridItems(
+    possiblePreferences: List<String>,
+    selectedPreferences: List<String>,
+    onChipsSelected : (String) -> Unit,
+){
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = Modifier
+            .fillMaxSize()
+    ){
+        items(possiblePreferences){chipText ->
+            val selected =  chipText in selectedPreferences
+            AssistChip(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .selectable(
+                        selected = selected
+                    ) {
+                        onChipsSelected(chipText)
+                    },
+                label = {
+                    Text(
+                        chipText,
+                    )
+                },
+                colors = AssistChipDefaults.assistChipColors(
+                    containerColor = if (selected) Color.Yellow else MaterialTheme.colorScheme.onPrimary,
+                ),
+                onClick = {
+                    onChipsSelected(chipText)
+                }
+            )
+        }
+    }
+
 }
 
 
@@ -276,10 +327,6 @@ fun EditUserImageAndName(
     profileUri : Uri?,
     onImageChange : (Uri) -> Unit,
 ) {
-    val imageUri: Any? by remember { mutableStateOf(R.drawable.round_person_24) }
-    var profileUrl by remember{
-        mutableStateOf<Uri?>(null)
-    }
 
 
     val profilePhotoPicker = rememberLauncherForActivityResult(

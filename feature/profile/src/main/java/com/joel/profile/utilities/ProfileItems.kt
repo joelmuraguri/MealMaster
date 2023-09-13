@@ -1,4 +1,4 @@
-package com.joel.profile
+package com.joel.profile.utilities
 
 data class ProfileItems(
     val icon : Int,

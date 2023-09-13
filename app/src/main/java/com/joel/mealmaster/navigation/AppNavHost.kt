@@ -1,14 +1,12 @@
 package com.joel.mealmaster.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.joel.discover.DiscoverScreen
 import com.joel.mealplan.MealPlanScreen
 import com.joel.preference.PreferenceScreen
-import com.joel.profile.ProfileItems
 import com.joel.profile.ProfileScreen
 import com.joel.profile.account.AccountsScreen
 import com.joel.profile.favourites.FavouritesScreen
