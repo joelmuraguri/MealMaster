@@ -8,7 +8,7 @@
     <string name="recipe_details_title">Recipe Details</string>
     <string name="meal_plan_title">Meal Plan</string>
     <string name="diet_preference_title">Diet Preference</string>
-    <string name="nutrition_tracking_title">Nutrition Tracking</string>
+    <string name="nutrition_tracking_title">com.joel.network.response.Nutrition Tracking</string>
     <string name="favourites_title">Favourites</string>
     <string name="settings_title">Settings</string>
 </resources>

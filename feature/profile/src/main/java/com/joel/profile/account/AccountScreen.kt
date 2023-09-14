@@ -69,14 +69,12 @@ fun AccountsScreen(
         skipPartiallyExpanded = false
     )
 
-    val preferenceItems = viewModel.preferenceItems
-
-
     val items by viewModel.preferenceListItems.collectAsState(initial = emptyList())
 
     BackHandler(bottomSheetState.isVisible) {
         scope.launch { bottomSheetState.hide() }
     }
+
 
     Scaffold(
         topBar = {
@@ -110,76 +108,55 @@ fun AccountsScreen(
             PreferenceList(
                 onPreferenceClick = { item ->
                     scope.launch {
+                        items.contains(item)
                         bottomSheetState.show()
                     }
                 },
                 items = items,
-            )
-
-
-            if (bottomSheetState.isVisible){
-                ModalBottomSheet(
-                    onDismissRequest = {
-                        scope.launch {
-
-                            bottomSheetState.hide()
-                        }
-                    },
-                    sheetState = bottomSheetState,
-                    content = {
-                        BottomSheetItems(
-                            possiblePreferences = preferenceItems.list,
-                            selectedPreferences = preferenceItems.selectedAnswers,
-                            onChipsSelected = { chipText ->
-                                   if (preferenceItems.list == viewModel.dietList){
-                                       viewModel.updateUserDetails(AccountUiEvents.SelectDiet(chipText))
-                                   } else if(preferenceItems.list == viewModel.allergiesList){
-                                       viewModel.updateUserDetails(AccountUiEvents.SelectAllergies(chipText))
-                                   } else {
-                                       viewModel.updateUserDetails(AccountUiEvents.SelectNutrition(chipText))
-                                   }
-                            },
-                            onClose = {
-                                scope.launch {
-                                    bottomSheetState.hide()
-                                }
-                            }
-                        )
+                viewModel = viewModel,
+                onClose = {
+                    scope.launch {
+                        bottomSheetState.hide()
                     }
-                )
-            }
+                },
+                bottomSheetVisibility = bottomSheetState.isVisible
+            )
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PreferenceList(
     items : List<UserPreferenceItems>,
-    onPreferenceClick: (UserPreferenceItems) -> Unit
+    onPreferenceClick: (UserPreferenceItems) -> Unit,
+    bottomSheetVisibility : Boolean,
+    onClose: () -> Unit,
+    viewModel: AccountViewModel
 ){
-//    items.forEach{ item ->
-//        PreferenceItems(
-//            items = item,
-//            onLaunchBottomSheet = {
-//                onPreferenceClick(item)
-//            }
-//        )
-//    }
 
-    LazyColumn(){
+    LazyColumn {
         items(items){ item ->
             PreferenceItems(
-                onLaunchBottomSheet = { onPreferenceClick(item) },
-                item = item
+                onLaunchBottomSheet = onPreferenceClick,
+                item = item,
+                bottomSheetVisibility = bottomSheetVisibility,
+                onClose = { onClose() },
+                viewModel = viewModel
             )
+
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PreferenceItems(
     onLaunchBottomSheet : (UserPreferenceItems) -> Unit,
-    item: UserPreferenceItems
+    item: UserPreferenceItems,
+    bottomSheetVisibility : Boolean,
+    onClose: () -> Unit,
+    viewModel: AccountViewModel
 ){
     Card(
         shape = RoundedCornerShape(20.dp),
@@ -199,6 +176,24 @@ fun PreferenceItems(
                 .padding(horizontal = 10.dp, vertical = 13.dp)
         )
     }
+
+    if (bottomSheetVisibility){
+        ModalBottomSheet(
+            onDismissRequest = { onClose() }) {
+            BottomSheetItems(
+                possiblePreferences = item.list,
+                onChipsSelected = { chipText ->
+                    when (item.list) {
+                        viewModel.dietList -> viewModel.updateUserDetails(AccountUiEvents.SelectDiet(chipText))
+                        viewModel.allergiesList -> viewModel.updateUserDetails(AccountUiEvents.SelectAllergies(chipText))
+                        viewModel.nutrientsList -> viewModel.updateUserDetails(AccountUiEvents.SelectNutrition(chipText))
+                    }
+                },
+                onClose = { onClose() },
+                selectedPreferences = item.selectedAnswers
+            )
+        }
+    }
 }
 
 
@@ -208,7 +203,6 @@ fun BottomSheetItems(
     selectedPreferences: List<String>,
     onChipsSelected : (String) -> Unit,
     onClose: () -> Unit,
-    viewModel: AccountViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ){
 
    Column{
@@ -222,100 +216,36 @@ fun BottomSheetItems(
                Icon(imageVector = Icons.Default.Check, contentDescription = null)
            }
        }
-
-       if(possiblePreferences == viewModel.dietList){
-           BottomSheetVerticalGridItems(
-               possiblePreferences = possiblePreferences,
-               selectedPreferences = viewModel.dietSelectedChips,
-               onChipsSelected = {
-                   onChipsSelected(it)
-               }
-           )
-       }else if (possiblePreferences == viewModel.allergiesList){
-           BottomSheetVerticalGridItems(
-               possiblePreferences = possiblePreferences,
-               selectedPreferences = viewModel.allergiesSelectedChips,
-               onChipsSelected = {
-                   onChipsSelected(it)
-               }
-           )
-       } else {
-           BottomSheetVerticalGridItems(
-               possiblePreferences = possiblePreferences,
-               selectedPreferences = viewModel.nutrientsSelectedChips,
-               onChipsSelected = {
-                   onChipsSelected(it)
-               }
-           )
+       LazyVerticalGrid(
+           columns = GridCells.Fixed(2),
+           modifier = Modifier
+               .height(450.dp)
+       ){
+           items(possiblePreferences){chipText ->
+               val selected =  chipText in selectedPreferences
+               AssistChip(
+                   modifier = Modifier
+                       .padding(8.dp)
+                       .selectable(
+                           selected = selected
+                       ) {
+                           onChipsSelected(chipText)
+                       },
+                   label = {
+                       Text(
+                           chipText,
+                       )
+                   },
+                   colors = AssistChipDefaults.assistChipColors(
+                       containerColor = if (selected) Color.Yellow else MaterialTheme.colorScheme.onPrimary,
+                   ),
+                   onClick = {
+                       onChipsSelected(chipText)
+                   }
+               )
+           }
        }
-//       LazyVerticalGrid(
-//           columns = GridCells.Fixed(2),
-//           modifier = Modifier
-//               .fillMaxSize()
-//       ){
-//           items(possiblePreferences){chipText ->
-//               val selected =  chipText in selectedPreferences
-//               AssistChip(
-//                   modifier = Modifier
-//                       .padding(8.dp)
-//                       .selectable(
-//                           selected = selected
-//                       ) {
-//                           onChipsSelected(chipText)
-//                       },
-//                   label = {
-//                       Text(
-//                           chipText,
-//                       )
-//                   },
-//                   colors = AssistChipDefaults.assistChipColors(
-//                       containerColor = if (selected) Color.Yellow else MaterialTheme.colorScheme.onPrimary,
-//                   ),
-//                   onClick = {
-//                       onChipsSelected(chipText)
-//                   }
-//               )
-//           }
-//       }
    }
-}
-
-@Composable
-fun BottomSheetVerticalGridItems(
-    possiblePreferences: List<String>,
-    selectedPreferences: List<String>,
-    onChipsSelected : (String) -> Unit,
-){
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = Modifier
-            .fillMaxSize()
-    ){
-        items(possiblePreferences){chipText ->
-            val selected =  chipText in selectedPreferences
-            AssistChip(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .selectable(
-                        selected = selected
-                    ) {
-                        onChipsSelected(chipText)
-                    },
-                label = {
-                    Text(
-                        chipText,
-                    )
-                },
-                colors = AssistChipDefaults.assistChipColors(
-                    containerColor = if (selected) Color.Yellow else MaterialTheme.colorScheme.onPrimary,
-                ),
-                onClick = {
-                    onChipsSelected(chipText)
-                }
-            )
-        }
-    }
-
 }
 
 

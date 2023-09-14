@@ -13,17 +13,14 @@ class AccountViewModel : ViewModel() {
 
 
     private val _dietSelectedChips = mutableStateListOf<String>()
-    val dietSelectedChips: List<String> get() = _dietSelectedChips
+    private val dietSelectedChips: List<String> get() = _dietSelectedChips
 
     private val _allergiesSelectedChips = mutableStateListOf<String>()
-    val allergiesSelectedChips: List<String> get() = _allergiesSelectedChips
+    private val allergiesSelectedChips: List<String> get() = _allergiesSelectedChips
 
     private val _nutrientsSelectedChips = mutableStateListOf<String>()
-    val nutrientsSelectedChips: List<String> get() = _nutrientsSelectedChips
+    private val nutrientsSelectedChips: List<String> get() = _nutrientsSelectedChips
 
-    private val _preferenceItems = mutableStateOf(UserPreferenceItems(title = "", list = emptyList()))
-    val preferenceItems : UserPreferenceItems
-        get() = _preferenceItems.value
 
     // Reference to the dietList from FakeDataStore
     val dietList: List<String> = FakeDataStore.dietList
@@ -34,17 +31,17 @@ class AccountViewModel : ViewModel() {
         val preferenceItems = listOf(
             UserPreferenceItems(
                 "Manage Diet",
-                list = dietList,
+                list = FakeDataStore.dietList,
                 selectedAnswers = dietSelectedChips
             ),
             UserPreferenceItems(
                 title = "Manage Allergies Preference",
-                list = allergiesList,
+                list = FakeDataStore.allergiesList,
                 selectedAnswers = allergiesSelectedChips
             ),
             UserPreferenceItems(
                 title = "Manage Nutrients",
-                list = nutrientsList,
+                list = FakeDataStore.nutrientsList,
                 selectedAnswers = nutrientsSelectedChips
             )
         )
