@@ -60,6 +60,7 @@ dependencies {
     implementation(project(":feature:mealplan"))
     implementation(project(":feature:recipes"))
     implementation(project(":feature:profile"))
+    implementation(project(":core:data"))
 
 
     implementation(libs.core.ktx)
@@ -67,6 +68,7 @@ dependencies {
     implementation(libs.activity.compose)
     implementation(platform(libs.compose.bom))
     implementation(libs.androidx.navigation)
+    implementation(libs.androidx.splash.screen.core)
     implementation(libs.ui)
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
