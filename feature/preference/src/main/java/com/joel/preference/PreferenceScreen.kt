@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.joel.preference.components.AllergiesQuestion
 import com.joel.preference.components.DietQuestion
@@ -26,7 +27,7 @@ private const val CONTENT_ANIMATION_DURATION = 300
 
 @Composable
 fun PreferenceScreen(
-    viewModel: PreferenceViewModel = viewModel(),
+    viewModel: PreferenceViewModel = hiltViewModel(),
     onFinishPressed: () -> Unit
 ){
 

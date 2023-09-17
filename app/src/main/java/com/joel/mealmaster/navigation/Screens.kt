@@ -23,7 +23,7 @@ sealed class Screens(var route: String, @DrawableRes var icon: Int, var title: I
         title = R.string.nutrition_tracking_title,
         icon = R.drawable.round_directions_24
         )
-    object UserPreference : Screens(
+    object UserAccount : Screens(
         route = "/dietPreference",
         title = R.string.diet_preference_title,
         icon = R.drawable.round_directions_24

@@ -17,12 +17,13 @@ import com.joel.recipes.RecipeScreen
 @Composable
 fun MealMasterNavHost(
     navController: NavHostController,
-    updateBottomBarState: (Boolean) -> Unit
+    updateBottomBarState: (Boolean) -> Unit,
+    startDestination : String
 ){
 
 
     NavHost(
-        navController = navController, startDestination = Screens.Preference.route
+        navController = navController, startDestination = startDestination
     ){
         composable(route = Screens.Preference.route){
             updateBottomBarState(false)
@@ -50,7 +51,7 @@ fun MealMasterNavHost(
                 navController.navigate(route = it.route)
             }
         }
-        composable(route = Screens.UserPreference.route){
+        composable(route = Screens.UserAccount.route){
             updateBottomBarState(false)
             AccountsScreen()
         }

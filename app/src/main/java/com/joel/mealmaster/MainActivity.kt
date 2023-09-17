@@ -10,19 +10,34 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
 import com.joel.mealmaster.navigation.BottomNavigationBar
 import com.joel.mealmaster.navigation.MealMasterNavHost
 import com.joel.mealmaster.ui.theme.MealMasterTheme
-import com.joel.profile.account.AccountsScreen
-import com.joel.profile.account.EditUserImageAndName
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+//    @Inject
+//    lateinit var splashViewModel: SplashViewModel
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val splashViewModel = ViewModelProvider(this)[SplashViewModel::class.java]
+
+        installSplashScreen().setKeepOnScreenCondition {
+            !splashViewModel.isLoading.value
+        }
         setContent {
             MealMasterTheme {
                 // A surface container using the 'background' color from the theme
@@ -30,7 +45,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                   MealApp()
+                    val screen by splashViewModel.startDestination
+                    MealApp(startDestination = screen)
                 }
             }
         }
@@ -39,7 +55,7 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun MealApp(){
+fun MealApp(startDestination : String){
     val navController = rememberNavController()
     val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
 
@@ -55,6 +71,7 @@ fun MealApp(){
             MealMasterNavHost(
                 navController = navController,
                 updateBottomBarState = { bottomBarState.value = it },
+                startDestination = startDestination
             )
         }
     }

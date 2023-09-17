@@ -4,12 +4,18 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joel.data.repo.DataStoreRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import com.joel.utilities.FakeDataStore
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class PreferenceViewModel : ViewModel() {
+@HiltViewModel
+class PreferenceViewModel @Inject constructor(
+    private val repository : DataStoreRepository
+) : ViewModel() {
 
 
     private val surveyQuestionOrder : List<PreferenceSurveyQuestion> = listOf(
@@ -70,6 +76,7 @@ class PreferenceViewModel : ViewModel() {
             }
             PreferenceUiEvents.SaveUserPreference -> {
                 viewModelScope.launch {
+                    repository.savePreferenceState(completed = true)
                     _uiEvent.send(UIevent.NavigationToHome)
                 }
             }
