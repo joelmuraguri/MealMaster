@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface UserDao {
 
     @Query("SELECT * FROM User_Profile_Table")
-    fun getUserInfo() : Flow<UserEntity>
+    fun getUserInfo(): Flow<UserEntity>
 
     @Upsert
     fun updateUserInfo(userEntity: UserEntity)
