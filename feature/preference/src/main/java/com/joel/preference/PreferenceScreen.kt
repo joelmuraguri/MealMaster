@@ -12,10 +12,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.joel.preference.components.AllergiesQuestion
 import com.joel.preference.components.DietQuestion
 import com.joel.preference.components.NutrientsQuestion
@@ -32,6 +33,7 @@ fun PreferenceScreen(
 ){
 
     val preferenceSurveyScreenData = viewModel.surveyScreenData
+    val prefStatus by viewModel.preferenceOnboardingCompleted
 
 
     LaunchedEffect(key1 = true){
@@ -51,13 +53,14 @@ fun PreferenceScreen(
 
         },
         onPreviousPressed = {
-              viewModel.fetchUserPreference(PreferenceUiEvents.MovePrevious)
+              viewModel.onEvents(PreferenceUiEvents.MovePrevious)
         },
         onNextPressed = {
-               viewModel.fetchUserPreference(PreferenceUiEvents.MoveNext)
+               viewModel.onEvents(PreferenceUiEvents.MoveNext)
         },
         onFinishPressed = {
-            viewModel.fetchUserPreference(PreferenceUiEvents.SaveUserPreference)
+            if (viewModel.preferenceOnboardingCompleted.value)
+            viewModel.onEvents(PreferenceUiEvents.SaveUserPreference)
         })
     { paddingValues ->
 
@@ -85,7 +88,7 @@ fun PreferenceScreen(
                     UserNameQuestion(
                         userName = viewModel.userName,
                         onNameChange = {
-                            viewModel.fetchUserPreference(PreferenceUiEvents.SelectUserName(it))
+                            viewModel.onEvents(PreferenceUiEvents.SelectUserName(it))
                         },
                         modifier = modifier,
                         )
@@ -96,7 +99,7 @@ fun PreferenceScreen(
                         selectedAnswers = viewModel.dietSelectedChips,
                         modifier = modifier,
                         onOptionSelected = { diet ->
-                               viewModel.fetchUserPreference(PreferenceUiEvents.SelectDiet(diet))
+                               viewModel.onEvents(PreferenceUiEvents.SelectDiet(diet))
                         },
                         possibleAnswers = viewModel.dietList
                     )
@@ -106,7 +109,7 @@ fun PreferenceScreen(
                     AllergiesQuestion(
                         selectedAnswers = viewModel.allergiesSelectedChips,
                         onOptionSelected = { allergies ->
-                              viewModel.fetchUserPreference(PreferenceUiEvents.SelectAllergies(allergies))
+                              viewModel.onEvents(PreferenceUiEvents.SelectAllergies(allergies))
                         },
                         modifier = modifier,
                         possibleAnswers = viewModel.allergiesList
@@ -117,7 +120,7 @@ fun PreferenceScreen(
                     NutrientsQuestion(
                         selectedAnswers = viewModel.nutrientsSelectedChips,
                         onOptionSelected = { nutrients ->
-                              viewModel.fetchUserPreference(PreferenceUiEvents.SelectNutrition(nutrients))
+                              viewModel.onEvents(PreferenceUiEvents.SelectNutrition(nutrients))
                         },
                         modifier = modifier,
                         possibleAnswers = viewModel.nutrientsList

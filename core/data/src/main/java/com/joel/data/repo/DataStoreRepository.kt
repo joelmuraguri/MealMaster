@@ -1,6 +1,7 @@
 package com.joel.data.repo
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -45,8 +46,10 @@ class DataRepositoryImpl @Inject constructor(
     }
 
     override suspend fun readPreferenceState(): Flow<Boolean> {
+        Log.d("DataRepositoryImpl", "Reading preference state...")
         return dataStore.data
             .catch { exception ->
+                Log.e("DataRepositoryImpl", "Error reading preference state: $exception")
                 if (exception is IOException) {
                     emit(emptyPreferences())
                 } else {
@@ -55,6 +58,7 @@ class DataRepositoryImpl @Inject constructor(
             }
             .map { preferences ->
                 val onPreferenceState = preferences[PreferencesKey.preferenceKey] ?: false
+                Log.d("DataRepositoryImpl", "Preference state: $onPreferenceState")
                 onPreferenceState
             }
     }

@@ -1,5 +1,7 @@
 package com.joel.preference
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -10,6 +12,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import com.joel.utilities.FakeDataStore
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -62,8 +66,17 @@ class PreferenceViewModel @Inject constructor(
     private val _uiEvent =  Channel<UIevent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
+    private var _preferenceOnboardingCompleted : MutableState<Boolean> = mutableStateOf(false)
+    val preferenceOnboardingCompleted: State<Boolean> = _preferenceOnboardingCompleted
+    init {
+        viewModelScope.launch {
+            repository.readPreferenceState().collect { completed ->
+                _preferenceOnboardingCompleted.value = completed
+            }
+        }
+    }
 
-    fun fetchUserPreference(preferenceUiEvents: PreferenceUiEvents){
+    fun onEvents(preferenceUiEvents: PreferenceUiEvents){
         when(preferenceUiEvents){
             is PreferenceUiEvents.MoveNext -> {
                 changeQuestion(questionIndex + 1)

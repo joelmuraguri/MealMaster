@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joel.data.repo.DataStoreRepository
 import com.joel.mealmaster.navigation.Screens
-import com.joel.preference.UIevent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -28,9 +27,13 @@ class OnBoardingViewModel @Inject constructor(
     private val _uiEvent =  Channel<UIEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
+    private var _onboardingCompleted : MutableState<Boolean> = mutableStateOf(false)
+    val onboardingCompleted: State<Boolean> = _onboardingCompleted
+
     init {
         viewModelScope.launch {
             repository.readPreferenceState().collect { completed ->
+                _onboardingCompleted.value = completed
                 if (completed) {
                     _startDestination.value = Screens.Preference.route
                 } else {
@@ -41,9 +44,10 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    fun saveUserOnBoarding(){
+
+    fun saveUserOnBoardingStatus(){
         viewModelScope.launch {
-            repository.savePreferenceState(completed = true)
+            repository.saveOnboardingState(completed = true)
             _uiEvent.send(UIEvent.NavToPref)
         }
     }

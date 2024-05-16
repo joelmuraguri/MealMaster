@@ -87,11 +87,11 @@ fun OnBoardingScreen(
                     }
                 },
                 onSkipClick = {
-                    viewModel.saveUserOnBoarding()
+                    viewModel.saveUserOnBoardingStatus()
                 },
                 buttonText = buttonText,
                 onGetStarted = {
-                    viewModel.saveUserOnBoarding()
+                    viewModel.saveUserOnBoardingStatus()
                 }
             )
         }

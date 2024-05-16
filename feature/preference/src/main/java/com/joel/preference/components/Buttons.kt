@@ -52,6 +52,7 @@ fun PreferenceBottomBar(
                 OutlinedButton(
                     onClick = { onPreviousPressed() },
                     modifier = Modifier
+                        .padding(horizontal = 10.dp)
                         .weight(1f)
                         .height(50.dp)
                 ) {
@@ -72,6 +73,7 @@ fun PreferenceBottomBar(
                 Button(
                     onClick = { onNextPressed() },
                     modifier = Modifier
+                        .padding(horizontal = 10.dp)
                         .weight(1f)
                         .height(50.dp),
                     enabled = isNextButtonEnabled
@@ -115,12 +117,12 @@ fun PreferenceTopBar(
             animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec, label = ""
         )
         LinearProgressIndicator(
-            progress = animatedFloatProgress,
-            trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2F),
-            color = Color.Yellow,
+            progress = { animatedFloatProgress },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp),
+            color = Color.Yellow,
+            trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2F),
         )
     }
 }

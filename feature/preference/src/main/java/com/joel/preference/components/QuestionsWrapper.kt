@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AssistChip
@@ -122,7 +123,8 @@ fun NameQuestion(
             ),
             keyboardActions = KeyboardActions(
                 onDone = null
-            )
+            ),
+            shape = RoundedCornerShape(16.dp)
         )
     }
 }
