@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="endless_meal_ideas">Endless_Meal_Ideas</string>
+    <string name="endless_meal_ideas_desc">Discover daily inspirations for your breakfast, lunch and dinner. </string>
+    <string name="organise_your_meal_plans">Organise Your Meal Plans</string>
+    <string name="organise_your_meal_plans_desc">Create your won meal plans. Set reminders and all essentials for a meal plan</string>
+    <string name="save_your_favourites">Save Your Favourites</string>
+    <string name="save_your_favourites_desc">Your culinay treasures. All in one place. Save and find your favourite recipes with ease whenever you want</string>
+</resources>
