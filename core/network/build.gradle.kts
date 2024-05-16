@@ -68,7 +68,21 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.client.serialization)
     implementation(libs.ktor.client.logging.jvm)
-    testImplementation(libs.ktor.client.mock)
+//    testImplementation(libs.ktor.client.mock)
+
+    //retrofit
+    implementation(libs.retrofit.kotlinx.serialization.converter)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.retrofit)
+
+    //coil
+    implementation(libs.coil.compose)
+    implementation(libs.landscapist.coil)
+
+    // OkHttp
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.interceptor)
+    testImplementation(libs.okhttp.mockwebserver)
 
     //hilt
     implementation(libs.hilt.android)
@@ -80,8 +94,8 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
     testImplementation(libs.junit)
-    testImplementation(libs.mockk)
-    testImplementation(libs.coroutines.test)
+//    testImplementation(libs.mockk)
+    testImplementation(libs.kotlin.coroutines.test)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
 }
