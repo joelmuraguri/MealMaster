@@ -1,4 +1,4 @@
-package com.joel.onboarding
+package com.joel.mealmaster.utils.vm
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -22,15 +22,14 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.KeyboardArrowLeft
-import androidx.compose.material.icons.outlined.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +39,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.joel.onboarding.utils.OnboardingItems
@@ -47,7 +47,21 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun OnBoardingScreen() {
+fun OnBoardingScreen(
+    onNavPressed : () -> Unit,
+    viewModel: OnBoardingViewModel = hiltViewModel()
+
+) {
+    LaunchedEffect(key1 = true) {
+        viewModel.uiEvent.collect{event ->
+            when(event){
+                UIEvent.NavToPref -> {
+                    onNavPressed()
+                }
+            }
+        }
+    }
+
     val items = OnboardingItems.getData()
     val scope = rememberCoroutineScope()
     val pageState = rememberPagerState(
@@ -60,6 +74,9 @@ fun OnBoardingScreen() {
             modifier = Modifier
                 .fillMaxSize()
         ) { page ->
+            val isLastPage = page == items.size - 1
+            val buttonText = if (isLastPage) "Let's get started!" else "Next"
+
             OnBoardingItem(
                 items = items[page],
                 size = items.size,
@@ -69,48 +86,72 @@ fun OnBoardingScreen() {
                         pageState.scrollToPage(pageState.currentPage + 1)
                     }
                 },
-                onSkipClick = {}
+                onSkipClick = {
+                    viewModel.saveUserOnBoarding()
+                },
+                buttonText = buttonText,
+                onGetStarted = {
+                    viewModel.saveUserOnBoarding()
+                }
             )
         }
     }
 }
 
-
 @Composable
-fun BottomSection(size: Int, index: Int, onButtonClick: () -> Unit = {}) {
+fun BottomSection(size: Int, index: Int, onButtonClick: () -> Unit, buttonText: String, onGetStarted : () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(12.dp)
     ) {
-        Indicators(size, index)
+        if (index != size - 1) {
+            Indicators(size, index)
+        }
 
-        FloatingActionButton(
-            onClick = { onButtonClick() },
-            modifier = Modifier
-                .height(40.dp)
-                .align(Alignment.CenterEnd)
-                .clip(RoundedCornerShape(16.dp))
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
+        if (buttonText == "Next") {
+            FloatingActionButton(
+                onClick = { onButtonClick() },
                 modifier = Modifier
-                    .padding(horizontal = 19.dp)
+                    .height(40.dp)
+                    .align(Alignment.CenterEnd)
+                    .clip(RoundedCornerShape(16.dp))
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier
+                        .padding(horizontal = 19.dp)
+                ) {
+                    Text(
+                        text = buttonText,
+                        color = Color.White,
+                    )
+                    Icon(
+                        Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+                        tint = Color.White,
+                        contentDescription = "Localized description"
+                    )
+                }
+            }
+        } else {
+            FloatingActionButton(
+                onClick = { onGetStarted() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(40.dp),
+                shape = RoundedCornerShape(16.dp)
             ) {
                 Text(
-                    text = "Next",
-                    color = Color.White,
-                )
-                Icon(
-                    Icons.Outlined.KeyboardArrowRight,
-                    tint = Color.White,
-                    contentDescription = "Localized description"
+                    text = buttonText,
+                    color = Color.White
                 )
             }
         }
     }
 }
+
+
 
 @Composable
 fun BoxScope.Indicators(size: Int, index: Int) {
@@ -151,7 +192,9 @@ fun OnBoardingItem(
     size: Int,
     index: Int,
     onButtonClick: () -> Unit,
-    onSkipClick: () -> Unit
+    onSkipClick: () -> Unit,
+    buttonText : String,
+    onGetStarted: () -> Unit
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -192,7 +235,7 @@ fun OnBoardingItem(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.Black.copy(alpha = 0.8f))
+                .background(Color.Black.copy(alpha = 0.85f))
                 .align(Alignment.BottomCenter)
                 .padding(vertical = 25.dp, horizontal = 16.dp)
         ) {
@@ -209,7 +252,9 @@ fun OnBoardingItem(
             )
             BottomSection(
                 size = size , index = index,
-                onButtonClick = onButtonClick
+                onButtonClick = onButtonClick,
+                buttonText = buttonText,
+                onGetStarted = onGetStarted
             )
         }
     }

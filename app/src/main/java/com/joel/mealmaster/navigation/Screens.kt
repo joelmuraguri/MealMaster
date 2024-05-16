@@ -1,49 +1,60 @@
 package com.joel.mealmaster.navigation
 
 import androidx.annotation.DrawableRes
+import androidx.compose.ui.res.stringResource
 import com.joel.mealmaster.R
 
-sealed class Screens(var route: String, @DrawableRes var icon: Int, var title: Int) {
+const val CHARACTER_ARGUMENT_KEY = "characterId"
+const val ISSUE_ARGUMENT_KEY = "issueId"
 
-    object Preference : Screens(
-        route = "/preference",
-        icon = R.drawable.round_directions_24,
-        title = R.string.preference_title)
-    object Home : Screens(route = "/home", icon = R.drawable.round_home_24, title = R.string.home_bottom_bar_title)
-    object MealPlan : Screens(route = "/mealplan", icon = R.drawable.round_meal_plan_24, title = R.string.meal_plan_bottom_bar_title)
-    object Recipes : Screens(route = "/recipes", icon = R.drawable.round_recipes_24, title = R.string.recipe_bottom_bar_title)
-    object RecipeDetails : Screens(
-        route = "/recipeDetails/{recipeId}",
-        icon = R.drawable.round_directions_24,
-        title = R.string.recipe_details_title
-    ) { const val recipeIdNavigationArgument = "recipeId" }
-    object Profile : Screens(route = "/profile", icon = R.drawable.round_person_24, title = R.string.profile_bottom_bar_title)
-    object NutritionTracking : Screens(
-        route = "/nutritionTRacking",
-        title = R.string.nutrition_tracking_title,
-        icon = R.drawable.round_directions_24
-        )
-    object UserAccount : Screens(
-        route = "/dietPreference",
-        title = R.string.diet_preference_title,
-        icon = R.drawable.round_directions_24
-        )
-    object FavouriteRecipes : Screens(
-        route = "/favourites",
-        title = R.string.favourites_title,
-        icon = R.drawable.round_directions_24
-        )
-    object Settings : Screens(
-        route = "/settings",
-        title = R.string.settings_title,
-        icon = R.drawable.round_directions_24
-        )
+sealed class Screens(val route: String, val icon: Int ?= null, val title: String) {
+
+    data object Onboarding : Screens(
+        route = "onboarding_route",
+        icon = null,
+        title =  ""
+    )
+    data object Preference : Screens(
+        route = "preference_route",
+        icon = null,
+        title =  ""
+    )
+    data object Search : Screens(
+        route = "search_route",
+        icon = R.drawable.round_search_24,
+        title =  ""
+    )
+    data object MealPlan : Screens(
+        route = "meal_plan_route",
+        icon = R.drawable.round_add_24,
+        title =  ""
+    )
+    data object Settings : Screens(
+        route = "settings_route",
+        icon = R.drawable.round_settings_24,
+        title = ""
+    )
+    data object Explore : Screens(
+        route = "explore_route",
+        icon = R.drawable.round_explore_24,
+        title = ""
+    )
+    data object Favourites : Screens(
+        route = "favourites_route",
+        icon = R.drawable.round_favorite_border_24,
+        title = ""
+    )
+    data object Profile : Screens(
+        route = "profile_route",
+        icon = R.drawable.round_person_24,
+        title = ""
+    )
 }
 
 
 val bottomBarNavigationList = listOf(
-    Screens.Home,
-    Screens.MealPlan,
-    Screens.Recipes,
-    Screens.Profile
+    Screens.Explore,
+    Screens.Search,
+    Screens.Favourites,
+    Screens.Profile,
 )

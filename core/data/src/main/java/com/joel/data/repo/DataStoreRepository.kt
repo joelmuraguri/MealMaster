@@ -21,6 +21,8 @@ interface DataStoreRepository {
     suspend fun savePreferenceState(completed : Boolean)
 
     suspend fun readPreferenceState() : Flow<Boolean>
+    suspend fun saveOnboardingState(completed : Boolean)
+    suspend fun readOnboardingState() : Flow<Boolean>
 
 }
 
@@ -29,15 +31,15 @@ class DataRepositoryImpl @Inject constructor(
 ) : DataStoreRepository{
 
     private object PreferencesKey {
-        val onBoardingKey = booleanPreferencesKey(name = "preference_save_completed")
+        val preferenceKey = booleanPreferencesKey(name = "preference_save_completed")
+        val onboardingKey = booleanPreferencesKey(name = "onboarding_save_completed")
     }
 
     private val dataStore = context.dataStore
 
-
     override suspend fun savePreferenceState(completed: Boolean) {
         dataStore.edit { preferences ->
-            preferences[PreferencesKey.onBoardingKey] = completed
+            preferences[PreferencesKey.preferenceKey] = completed
         }
 
     }
@@ -52,7 +54,28 @@ class DataRepositoryImpl @Inject constructor(
                 }
             }
             .map { preferences ->
-                val onBoardingState = preferences[PreferencesKey.onBoardingKey] ?: false
+                val onPreferenceState = preferences[PreferencesKey.preferenceKey] ?: false
+                onPreferenceState
+            }
+    }
+
+    override suspend fun saveOnboardingState(completed: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKey.onboardingKey] = completed
+        }
+    }
+
+    override suspend fun readOnboardingState(): Flow<Boolean> {
+        return dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }
+            .map { preferences ->
+                val onBoardingState = preferences[PreferencesKey.onboardingKey] ?: false
                 onBoardingState
             }
     }

@@ -6,66 +6,67 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.joel.discover.DiscoverScreen
 import com.joel.mealplan.MealPlanScreen
+import com.joel.mealmaster.utils.vm.OnBoardingScreen
 import com.joel.preference.PreferenceScreen
 import com.joel.profile.ProfileScreen
-import com.joel.profile.account.AccountsScreen
 import com.joel.profile.favourites.FavouritesScreen
-import com.joel.profile.nutrition_tracking.NutritionTrackingScreen
-import com.joel.profile.settings.SettingsScreen
 import com.joel.recipes.RecipeScreen
 
 @Composable
 fun MealMasterNavHost(
     navController: NavHostController,
     updateBottomBarState: (Boolean) -> Unit,
+    updateFABState: (Boolean) -> Unit,
     startDestination : String
 ){
-
 
     NavHost(
         navController = navController, startDestination = startDestination
     ){
-        composable(route = Screens.Preference.route){
+        composable(route = Screens.Onboarding.route){
+            updateFABState(false)
             updateBottomBarState(false)
-            PreferenceScreen(
-                onFinishPressed = {
-                    navController.navigate(Screens.Home.route)
+            OnBoardingScreen(
+                onNavPressed = {
+                    navController.navigate(Screens.Preference.route)
                 }
             )
         }
-        composable(route = Screens.Home.route){
+        composable(route = Screens.Preference.route){
+            updateFABState(false)
+            updateBottomBarState(false)
+            PreferenceScreen(
+                onFinishPressed = {
+                    navController.navigate(Screens.Explore.route)
+                }
+            )
+        }
+        composable(route = Screens.Explore.route){
+            updateFABState(true)
             updateBottomBarState(true)
             DiscoverScreen()
         }
         composable(route = Screens.MealPlan.route){
+            updateFABState(false)
             updateBottomBarState(true)
             MealPlanScreen()
         }
-        composable(route = Screens.Recipes.route){
+        composable(route = Screens.Search.route){
+            updateFABState(true)
             updateBottomBarState(true)
             RecipeScreen()
         }
         composable(route = Screens.Profile.route){
+            updateFABState(true)
             updateBottomBarState(true)
             ProfileScreen {
                 navController.navigate(route = it.route)
             }
         }
-        composable(route = Screens.UserAccount.route){
-            updateBottomBarState(false)
-            AccountsScreen()
-        }
-        composable(route = Screens.NutritionTracking.route){
-            updateBottomBarState(false)
-            NutritionTrackingScreen()
-        }
-        composable(route = Screens.FavouriteRecipes.route){
-            updateBottomBarState(false)
+        composable(route = Screens.Favourites.route){
+            updateFABState(true)
+            updateBottomBarState(true)
             FavouritesScreen()
-        }
-        composable(route = Screens.Settings.route){
-            updateBottomBarState(false)
-            SettingsScreen()
         }
     }
 }

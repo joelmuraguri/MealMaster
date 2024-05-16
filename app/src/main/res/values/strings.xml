@@ -5,6 +5,7 @@
     <string name="recipe_bottom_bar_title">Recipes</string>
     <string name="profile_bottom_bar_title">Profile</string>
     <string name="preference_title">Preference</string>
+<!--    <string name="preference_title">Preference</string>-->
     <string name="recipe_details_title">Recipe Details</string>
     <string name="meal_plan_title">Meal Plan</string>
     <string name="diet_preference_title">Diet Preference</string>
