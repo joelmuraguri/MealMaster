@@ -44,7 +44,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.7"
+        kotlinCompilerExtensionVersion =  "1.5.12"
     }
     packaging {
         resources {
@@ -56,6 +56,7 @@ android {
 dependencies {
 
     implementation(project(":feature:preference"))
+    implementation(project(":feature:onboarding"))
     implementation(project(":feature:discover"))
     implementation(project(":feature:mealplan"))
     implementation(project(":feature:recipes"))
