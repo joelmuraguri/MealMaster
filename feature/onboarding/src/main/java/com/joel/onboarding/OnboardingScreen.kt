@@ -12,15 +12,12 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,7 +28,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -40,20 +36,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.joel.onboarding.utils.OnboardingItems
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
-@Preview
 @Composable
-fun OnBoarding() {
+fun OnBoardingScreen() {
     val items = OnboardingItems.getData()
     val scope = rememberCoroutineScope()
     val pageState = rememberPagerState(
@@ -61,61 +55,22 @@ fun OnBoarding() {
     )
 
     Column(modifier = Modifier.fillMaxSize()) {
-        TopSection(
-            onBackClick = {
-                if (pageState.currentPage + 1 > 1) scope.launch {
-                    pageState.scrollToPage(pageState.currentPage - 1)
-                }
-            },
-            onSkipClick = {
-                if (pageState.currentPage + 1 < items.size) scope.launch {
-                    pageState.scrollToPage(items.size - 1)
-                }
-            }
-        )
-
         HorizontalPager(
             state = pageState,
             modifier = Modifier
-                .fillMaxHeight(0.9f)
-                .fillMaxWidth()
+                .fillMaxSize()
         ) { page ->
-            OnBoardingItem(items = items[page])
-        }
-
-        HorizontalPager(
-            state = pageState,
-            pageSize = PageSize.Fill
-        ) {
-            OnBoardingItem(items = items[it])
-        }
-        BottomSection(size = items.size, index = pageState.currentPage) {
-            if (pageState.currentPage + 1 < items.size) scope.launch {
-                pageState.scrollToPage(pageState.currentPage + 1)
-            }
-        }
-    }
-}
-
-@Composable
-fun TopSection(onBackClick: () -> Unit = {}, onSkipClick: () -> Unit = {}) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp)
-    ) {
-        // Back button
-        IconButton(onClick = onBackClick, modifier = Modifier.align(Alignment.CenterStart)) {
-            Icon(imageVector = Icons.Outlined.KeyboardArrowLeft, contentDescription = null)
-        }
-
-        // Skip Button
-        TextButton(
-            onClick = onSkipClick,
-            modifier = Modifier.align(Alignment.CenterEnd),
-            contentPadding = PaddingValues(0.dp)
-        ) {
-            Text(text = "Skip", color = MaterialTheme.colorScheme.onBackground)
+            OnBoardingItem(
+                items = items[page],
+                size = items.size,
+                index = pageState.currentPage,
+                onButtonClick = {
+                    if (pageState.currentPage + 1 < items.size) scope.launch {
+                        pageState.scrollToPage(pageState.currentPage + 1)
+                    }
+                },
+                onSkipClick = {}
+            )
         }
     }
 }
@@ -128,30 +83,31 @@ fun BottomSection(size: Int, index: Int, onButtonClick: () -> Unit = {}) {
             .fillMaxWidth()
             .padding(12.dp)
     ) {
-        // Indicators
         Indicators(size, index)
 
-        // FAB Next
-        /* FloatingActionButton(
-             onClick = onButtonClick,
-            // backgroundColor = MaterialTheme.colorScheme.primary,
-            // contentColor = MaterialTheme.colorScheme.onPrimary,
-             modifier = Modifier.align(Alignment.CenterEnd)
-         ) {
-             Icon(imageVector = Icons.Outlined.KeyboardArrowRight, contentDescription = "Next")
-         }*/
-
         FloatingActionButton(
-            onClick = { /* do something */ },
-            contentColor = Color.Black,
+            onClick = { onButtonClick() },
             modifier = Modifier
+                .height(40.dp)
                 .align(Alignment.CenterEnd)
-                .clip(RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
+                .clip(RoundedCornerShape(16.dp))
         ) {
-            Icon(
-                Icons.Outlined.KeyboardArrowRight,
-                tint = Color.White,
-                contentDescription = "Localized description")
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier
+                    .padding(horizontal = 19.dp)
+            ) {
+                Text(
+                    text = "Next",
+                    color = Color.White,
+                )
+                Icon(
+                    Icons.Outlined.KeyboardArrowRight,
+                    tint = Color.White,
+                    contentDescription = "Localized description"
+                )
+            }
         }
     }
 }
@@ -190,53 +146,72 @@ fun Indicator(isSelected: Boolean) {
 }
 
 @Composable
-fun OnBoardingItem(items: OnboardingItems) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+fun OnBoardingItem(
+    items: OnboardingItems,
+    size: Int,
+    index: Int,
+    onButtonClick: () -> Unit,
+    onSkipClick: () -> Unit
+) {
+    Box(
         modifier = Modifier.fillMaxSize()
     ) {
         Image(
-            painter = painterResource(id = items.image),
-            contentDescription = "Image1",
-            modifier = Modifier.padding(start = 50.dp, end = 50.dp)
-        )
-
-        Spacer(modifier = Modifier.height(25.dp))
-
-        Text(
-            text = stringResource(id = items.titleHeader),
-            style = MaterialTheme.typography.headlineMedium,
-            // fontSize = 24.sp,
-            color = MaterialTheme.colorScheme.onBackground,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            letterSpacing = 1.sp,
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = stringResource(id = items.screenDescription),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground,
-            fontWeight = FontWeight.Light,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(10.dp),
-            letterSpacing = 1.sp,
-        )
-    }
-}
-
-@Composable
-fun OnboardingScreen() {
-
-    Scaffold { paddingValues ->
-        Box(
+            painter = rememberAsyncImagePainter(
+                ImageRequest.Builder(LocalContext.current).data(data = items.image).apply(block = fun ImageRequest.Builder.() {
+                    crossfade(true)
+                }).build()
+            ),
+            contentDescription = stringResource(id = items.titleHeader),
             modifier = Modifier
-                .padding(paddingValues)
-        ) {
+                .fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
 
+        Box(
+            contentAlignment = Alignment.TopEnd,
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            TextButton(
+                onClick = onSkipClick,
+                modifier = Modifier
+                    .padding(16.dp)
+                    .align(Alignment.CenterEnd),
+                contentPadding = PaddingValues(0.dp)
+            ) {
+                Text(
+                    text = "Skip",
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.bodyLarge,
+
+                )
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Black.copy(alpha = 0.8f))
+                .align(Alignment.BottomCenter)
+                .padding(vertical = 25.dp, horizontal = 16.dp)
+        ) {
+            Text(
+                text = stringResource(id = items.titleHeader),
+                style = MaterialTheme.typography.headlineMedium,
+                color = Color.White,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            Text(
+                text = stringResource(id = items.screenDescription),
+                style = MaterialTheme.typography.labelLarge,
+                color = Color.White
+            )
+            BottomSection(
+                size = size , index = index,
+                onButtonClick = onButtonClick
+            )
         }
     }
 }
+

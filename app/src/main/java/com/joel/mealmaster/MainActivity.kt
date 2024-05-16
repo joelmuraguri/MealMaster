@@ -10,7 +10,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -20,8 +19,8 @@ import androidx.navigation.compose.rememberNavController
 import com.joel.mealmaster.navigation.BottomNavigationBar
 import com.joel.mealmaster.navigation.MealMasterNavHost
 import com.joel.mealmaster.ui.theme.MealMasterTheme
+import com.joel.onboarding.OnBoardingScreen
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -41,13 +40,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             MealMasterTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    val screen by splashViewModel.startDestination
-                    MealApp(startDestination = screen)
-                }
+                OnBoardingScreen()
+//                Surface(
+//                    modifier = Modifier.fillMaxSize(),
+//                    color = MaterialTheme.colorScheme.background
+//                ) {
+//                    OnboardingScreen()
+////                    val screen by splashViewModel.startDestination
+////                    MealApp(startDestination = screen)
+//                }
             }
         }
     }

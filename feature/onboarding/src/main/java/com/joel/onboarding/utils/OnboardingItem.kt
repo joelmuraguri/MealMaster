@@ -11,7 +11,7 @@ data class OnboardingItems(
         fun getData(): List<OnboardingItems>{
             return listOf(
                 OnboardingItems(
-                    image = R.drawable.enjoying_meal,
+                    image = R.drawable.beautiful_delicious_fast_food,
                     titleHeader =  R.string.endless_meal_ideas,
                     R.string.endless_meal_ideas_desc
                 ),
@@ -21,9 +21,14 @@ data class OnboardingItems(
                     R.string.organise_your_meal_plans_desc
                 ),
                 OnboardingItems(
-                    image = R.drawable.favourites_recipes,
+                    image = R.drawable.favourite_meals,
                     titleHeader =  R.string.save_your_favourites,
                     R.string.save_your_favourites_desc
+                ),
+                OnboardingItems(
+                    image = R.drawable.share_love,
+                    titleHeader =  R.string.share_your_love,
+                    R.string.share_your_love_desc
                 )
             )
         }
