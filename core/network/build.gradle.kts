@@ -11,15 +11,6 @@ plugins {
 
 }
 
-val localPropertiesFile = rootProject.file("local.properties")
-val localProperties = Properties().apply {
-    if (localPropertiesFile.exists()) {
-        localPropertiesFile.inputStream().use { stream ->
-            load(stream)
-        }
-    }
-}
-
 android {
     namespace = "com.joel.network"
     compileSdk = 34
@@ -38,13 +29,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-        }
-        getByName("debug") {
-            buildConfigField("String", "API_KEY", "\"${localProperties.getProperty("API_KEY")}\"")
-        }
-        debug {
-            // configuration for debug builds
-            buildConfigField("boolean", "DEBUG", "true")
         }
     }
     compileOptions {

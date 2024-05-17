@@ -6,5 +6,7 @@ data class Recipe(
     val time : Long,
     val serves : Int,
     val rating : Int,
-    val calories : Int
+    val calories : Int,
+    val image : String,
+    val likes : Int
 )

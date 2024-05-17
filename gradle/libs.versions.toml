@@ -33,6 +33,7 @@ okhttp = "4.12.0"
 retrofit2KotlinxSerializationConverter = "1.0.0"
 accompanist_version = "0.27.0"
 landscapistVersion = "1.4.9"
+composePreviewRendererVersion = "0.0.1-alpha01"
 
 
 
@@ -88,6 +89,7 @@ okhttp_interceptor = { module = "com.squareup.okhttp3:logging-interceptor", vers
 okhttp_mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "okhttp"}
 accompanist-pager = { group="com.google.accompanist",name="accompanist-pager", version.ref="accompanist_version"}
 accompanist-pager-indicators = { group="com.google.accompanist",name="accompanist-pager-indicators", version.ref="accompanist_version"}
+compose-preview-renderer = { group = "com.android.tools.compose", name = "compose-preview-renderer", version.ref = "composePreviewRendererVersion" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
