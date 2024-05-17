@@ -85,6 +85,7 @@ dependencies {
     implementation(project(":feature:profile"))
     implementation(project(":core:data"))
     implementation(project(":core:network"))
+    implementation(project(":core:domain"))
 
 
     implementation(libs.core.ktx)
@@ -126,4 +127,6 @@ dependencies {
     //coil
     implementation(libs.coil.compose)
     implementation(libs.landscapist.coil)
+
+    implementation(libs.timber)
 }

@@ -1,6 +1,14 @@
 package com.joel.mealmaster.di
 
+import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.joel.data.repo.ConnectivityObserver
+import com.joel.data.repo.RecipeRepository
+import com.joel.data.repo.defaul.DefaultConnectivityObserver
+import com.joel.data.repo.defaul.DefaultRecipeRepository
+import com.joel.domain.use_case.RecipeUseCase
+import com.joel.domain.use_case.recipe.GetRandomRecipeUseCase
+import com.joel.domain.use_case.recipe.GetRecipeInfoUseCase
 import com.joel.mealmaster.BuildConfig
 import com.joel.network.service.RecipeService
 import com.joel.network.source.DefaultRecipeRemoteSource
@@ -14,9 +22,14 @@ import java.util.concurrent.TimeUnit
 
 interface AppContainer {
     val recipeRemoteSource : RecipeRemoteSource
+    val connectivityObserver : ConnectivityObserver
+    val repository : RecipeRepository
+    val recipeUseCase : RecipeUseCase
 }
 
-class DefaultAppContainer : AppContainer{
+class DefaultAppContainer(
+    private val context: Context
+) : AppContainer{
 
     private val spoonacularBaseUrl = "https://api.spoonacular.com"
 
@@ -43,6 +56,19 @@ class DefaultAppContainer : AppContainer{
         DefaultRecipeRemoteSource(
             recipeService = retrofitService,
             apiKey = BuildConfig.API_KEY
+        )
+    }
+    override val connectivityObserver: ConnectivityObserver by lazy {
+        DefaultConnectivityObserver(context)
+    }
+    override val repository: RecipeRepository by lazy {
+        DefaultRecipeRepository(recipeRemoteSource)
+    }
+
+    override val recipeUseCase: RecipeUseCase by lazy {
+        RecipeUseCase(
+            getRandomRecipeUseCase = GetRandomRecipeUseCase(repository),
+            getRecipeInfoUseCase = GetRecipeInfoUseCase(repository)
         )
     }
 

@@ -1,13 +1,18 @@
 package com.joel.mealmaster.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresExtension
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.joel.discover.DiscoverScreen
+import com.joel.discover.DiscoverViewModel
+import com.joel.mealmaster.di.ViewModelFactory
 import com.joel.mealplan.MealPlanScreen
 import com.joel.mealmaster.utils.vm.OnBoardingScreen
 import com.joel.mealmaster.utils.vm.OnBoardingViewModel
@@ -17,6 +22,7 @@ import com.joel.profile.ProfileScreen
 import com.joel.profile.favourites.FavouritesScreen
 import com.joel.recipes.RecipeScreen
 
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
 fun MealMasterNavHost(
     navController: NavHostController,
@@ -72,7 +78,10 @@ fun MealMasterNavHost(
         composable(route = Screens.Explore.route){
             updateFABState(true)
             updateBottomBarState(true)
-            DiscoverScreen()
+            val viewModel : DiscoverViewModel = viewModel(factory = ViewModelFactory.Factory)
+            DiscoverScreen(
+                discoverViewModel = viewModel
+            )
         }
         composable(route = Screens.MealPlan.route){
             updateFABState(false)

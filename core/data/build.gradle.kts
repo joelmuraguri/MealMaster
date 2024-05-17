@@ -41,7 +41,7 @@ dependencies {
 
 
     implementation(project(":core:database"))
-    implementation(project(":core:domain"))
+    implementation(project(":core:network"))
 
     implementation(libs.core.ktx)
     implementation(libs.appcompat)

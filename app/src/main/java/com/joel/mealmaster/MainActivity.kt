@@ -1,16 +1,20 @@
 package com.joel.mealmaster
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,6 +39,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -52,11 +57,14 @@ class MainActivity : ComponentActivity() {
 }
 
 
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
 fun MealApp(){
     val navController = rememberNavController()
     val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
     val fabBottomState = rememberSaveable { mutableStateOf(true) }
+    val snackBarHostState = remember { SnackbarHostState() }
+
 
     val onBoardingViewModel = hiltViewModel<OnBoardingViewModel>()
     val preferenceViewModel = hiltViewModel<PreferenceViewModel>()
@@ -80,15 +88,6 @@ fun MealApp(){
                 }
             }
         }
-//        } else {
-//            navController.navigate(
-//                if (!onBoardingStatus) {
-//                    Screens.Onboarding.route
-//                } else {
-//                    Screens.Preference.route
-//                }
-//            )
-//        }
     }
 
     Scaffold(
@@ -116,7 +115,11 @@ fun MealApp(){
 fun FAB(
     onNavToMealPlan : () -> Unit
 ){
-    FloatingActionButton(onClick = { onNavToMealPlan() }) {
-        Icon(painter = painterResource(id = R.drawable.round_add_24), contentDescription = null)
+    FloatingActionButton(
+        onClick = { onNavToMealPlan() },
+        shape = CircleShape
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.round_add_24), contentDescription = null)
     }
 }

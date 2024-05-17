@@ -28,6 +28,7 @@ data class RecipeInfoDTO(
     val preparationMinutes: Int ?= null,
     val pricePerServing: Double ?= null,
     val readyInMinutes: Int ?= null,
+    val nutrition: Nutrition ?= null,
     val servings: Int ?= null,
     val sourceName: String ?= null,
     val sourceUrl: String ?= null,
@@ -44,6 +45,63 @@ data class RecipeInfoDTO(
     val weightWatcherSmartPoints: Int ?= null,
     val winePairing: WinePairing ?= null
 ) {
+
+    @Serializable
+    data class Nutrition(
+        val caloricBreakdown: CaloricBreakdown,
+        val flavonoids: List<Flavonoid> = emptyList(),
+        val ingredients: List<Ingredient> = emptyList(),
+        val nutrients: List<Ingredient.NutrientX> = emptyList(),
+        val properties: List<Property> = emptyList(),
+        val weightPerServing: WeightPerServing ?= null
+    ) {
+
+        @Serializable
+        data class WeightPerServing(
+            val amount: Int ?= null,
+            val unit: String ?= null
+        )
+
+        @Serializable
+        data class Property(
+            val amount: Double ?= null,
+            val name: String ?= null,
+            val unit: String ?= null
+        )
+
+        @Serializable
+        data class CaloricBreakdown(
+            val percentCarbs: Double ?= null,
+            val percentFat: Double ?= null,
+            val percentProtein: Double ?= null
+        )
+
+        @Serializable
+        data class Flavonoid(
+            val amount: Double ?= null,
+            val name: String ?= null,
+            val unit: String ?= null
+        )
+
+        @Serializable
+        data class Ingredient(
+            val amount: Double ?= null,
+            val id: Int ?= null,
+            val name: String ?= null,
+            val nutrients: List<NutrientX> = emptyList(),
+            val unit: String ?= null
+        ) {
+
+            @Serializable
+            data class NutrientX(
+                val amount: Double ?= null,
+                val name: String ?= null,
+                val percentOfDailyNeeds: Double ?= null,
+                val unit: String ?= null
+            )
+        }
+
+    }
 
     @Serializable
     data class WinePairing(
@@ -140,8 +198,6 @@ data class RecipeInfoDTO(
                 val unitLong: String ?= null,
                 val unitShort: String ?= null
             )
-
-
         }
     }
 }
